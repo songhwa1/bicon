@@ -13,28 +13,45 @@ class Search(QWidget, form_widget):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        if self.home_login_pb.text() == '로그인':
-            self.home_login_pb.clicked.connect(self.gologin)
-            self.login_student_pb.clicked.connect(self.login)
-        elif self.home_login_pb.text() == '로그아웃':
-            self.home_login_pb.clicked.connect(self.logout)
+        self.log = 0  # 로그인 ,로그 아웃 할 때 필요, 로그인 상태 저장
+
+        self.login_SW.setCurrentIndex(0)
+        self.login_Home_Button.clicked.connect(self.gohome)
+        self.att_Home_Button.clicked.connect(self.gohome)
+        self.calendar_Home_Button1.clicked.connect(self.gohome)
+        self.calendar_Home_Button2.clicked.connect(self.gohome)
+        self.home_schedule_pb.clicked.connect(self.goschedule)
+        self.home_login_pb.clicked.connect(self.gologin)
+
+        self.login_student_pb.clicked.connect(self.studentlogin)
+        self.login_teacher_pb.clicked.connect(self.teacherlogin)
+        self.calendarWidget.clicked.connect(self.choicedate)
+        self.addschedule_pb.clicked.connect(self.addschedule)
+
 
     # 시그널 연결
     def gohome(self):
         self.login_SW.setCurrentIndex(0)
     def gologin(self):
-        self.login_SW.setCurrentIndex(1)
-        self.login_id_lineEdit.clear()
-        self.login_pw_lineEdit.clear()
+        # 로그아웃
+        if self.log == 1:  # 로그인 된 상태
+            self.logout()
+            self.login_SW.setCurrentIndex(0)
 
+        else:
+            self.login_SW.setCurrentIndex(1)    # 로그인 페이지로 가기
+            self.login_id_lineEdit.clear()
+            self.login_pw_lineEdit.clear()
 
-    def login(self):
-        if self.login_id_lineEdit.text() == "":
-            QMessageBox.critical(self, "로그인 오류", "정보를 입력하세요")
-            return
-        self.id = self.login_id_lineEdit.text()
+    def goschedule(self):
+        self.login_SW.setCurrentIndex(3)
+        self.textEdit.clear()
+        self.textBrowser.clear()
+
+    def studentlogin(self):
+        self.student_id = self.login_id_lineEdit.text()
         pw = self.login_pw_lineEdit.text()
-        check = False
+
         # MySQL에서 import 해오기
         conn = pymysql.connect(host='127.0.0.1',
                                port=3306,
@@ -42,34 +59,147 @@ class Search(QWidget, form_widget):
                                password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql ="SELECT * FROM `attendance check`.data_ai where ID like '%s'"%self.id
+        sql ="SELECT * FROM `attendance check`.data_ai where ID like '%s'"%self.student_id
         a.execute(sql)
         id_check = a.fetchall()     # 이중 튜플 형태(( ))
-        print(id_check)
 
-        if self.id != id_check[0][1]:       # id_check[0][1] = id
-            QMessageBox.critical(self, "로그인 오류", "ID를 다시 입력하세요")
-        elif pw != id_check[0][2]:     # id_check[0][2] = pw
+        if id_check[0][4] == '학생':
+            if self.login_id_lineEdit.text() == "":
+                QMessageBox.critical(self, "로그인 오류", "정보를 입력하세요")
+                return
 
-            QMessageBox.critical(self, "로그인 오류", "비밀번호를 다시 입력하세요")
-        elif pw == '':
-            QMessageBox.critical(self, "로그인 오류", "비밀번호를 입력하세요")
+            if self.student_id != id_check[0][1]:       # id_check[0][1] = id
+                QMessageBox.critical(self, "로그인 오류", "ID를 다시 입력하세요")
+            elif pw != id_check[0][2]:     # id_check[0][2] = pw
 
+                QMessageBox.critical(self, "로그인 오류", "비밀번호를 다시 입력하세요")
+            elif pw == '':
+                QMessageBox.critical(self, "로그인 오류", "비밀번호를 입력하세요")
+
+            else:
+                # 로그인 성공
+                a.execute(f"UPDATE `attendance check`.data_ai SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
+                conn.commit()
+                self.gohome()   # 홈으로 가는 메서드 호출
+                self.home_login_pb.setText('로그아웃')
+                self.log = 1    # init에서 불러온 변수(로그인 상태 저장)
+                return True
+            a.close()
         else:
-            self.check = True
-            self.gohome()   # 홈으로 가는 메서드 호출
-            self.loginsuccess()     # 메서드 호출
-            return True    # 로그인 성공
+            QMessageBox.critical(self, "로그인 오류", "학생이 아닙니다")
+
+    def teacherlogin(self):
+        self.teacher_id = self.login_id_lineEdit.text()
+        pw = self.login_pw_lineEdit.text()
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = "SELECT * FROM `attendance check`.data_ai where ID like '%s'" % self.teacher_id
+        a.execute(sql)
+        id_check = a.fetchall()  # 이중 튜플 형태(( ))
+        if id_check[0][4] == '교수':
+            if self.login_id_lineEdit.text() == "":
+                QMessageBox.critical(self, "로그인 오류", "정보를 입력하세요")
+                return
+
+            if self.teacher_id != id_check[0][1]:  # id_check[0][1] = id
+                QMessageBox.critical(self, "로그인 오류", "ID를 다시 입력하세요")
+            elif pw != id_check[0][2]:  # id_check[0][2] = pw
+
+                QMessageBox.critical(self, "로그인 오류", "비밀번호를 다시 입력하세요")
+            elif pw == '':
+                QMessageBox.critical(self, "로그인 오류", "비밀번호를 입력하세요")
+
+            else:
+                # 로그인 성공
+                a.execute(f"UPDATE `attendance check`.data_ai SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
+                conn.commit()
+                print(id_check[0][26])
+                self.gohome()  # 홈으로 가는 메서드 호출
+                self.home_login_pb.setText('로그아웃')
+                self.log = 1  # init에서 불러온 변수(로그인 상태 저장)
+                return True
+            a.close()
+        else:
+            QMessageBox.critical(self, "로그인 오류", "교사가 아닙니다")
 
 
     # 로그인 성공 시 버튼 텍스트를 로그아웃으로 바꾸는 메서드
-    def loginsuccess(self):
-        self.home_login_pb.setText('로그아웃')
+    # def loginsuccess(self):     # 굳이 메서드로 안 만들어도 될듯.....?
+    #     self.home_login_pb.setText('로그아웃')
 
     def logout(self):
-        if self.check == True:
-            self.check = False
-            self.home_login_pb.setText('로그인')
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = "SELECT * FROM `attendance check`.data_ai where 로그인여부 like '%s'" %'O'
+        a.execute(sql)
+        login_check = a.fetchall()  # 이중 튜플 형태(( ))
+
+        for i in range(len(login_check)):
+            if self.student_id == login_check[i][1]:
+                temp = 1
+                f"update data_ai set 로그인여부 = 'X' where ID = '{self.student_id}'"
+                conn.commit()
+
+            elif self.teacher_id == login_check[i][1]:
+                temp = 2
+                f"update data_ai set 로그인여부 = 'X' where ID = '{self.teacher_id}'"
+                conn.commit()
+
+        QMessageBox.information(self, "로그아웃", "로그아웃 됐습니다")
+        self.home_login_pb.setText('로그인')
+        a.close()
+
+    def choicedate(self):
+        # addschedule에서 필요한 값이기 때문에 self 붙여줌
+        self.date = self.calendarWidget.selectedDate().toString("yyyy-MM-dd")   # 선택한 날짜 정보 문자열로 반환
+        self.cb_name = self.comboBox.currentText()
+
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        a.execute(f"SELECT memo FROM `attendance check`.schedule where name like '{self.cb_name}' and date1 like '{self.date}'")
+        all_memo = a.fetchall()  # 이중 튜플 형태(( ))
+        print(all_memo)
+        for i in all_memo:
+            self.textBrowser.append(str(i[0]))
+
+
+    def addschedule(self):
+        self.choicedate()
+
+        # 일정 페이지로 넘어올 때 clear 헤주려고 self 붙여줌
+        self.memo_data = self.textEdit.toPlainText()
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM `attendance check`.schedule where name like '{self.cb_name}'"
+        a.execute(sql)
+        add_memo = a.fetchall()  # 이중 튜플 형태(( ))
+        print("@",add_memo)
+        if str(self.cb_name) == add_memo[0][0]:
+            a.execute(f"INSERT INTO schedule (name, ID, date1, memo) VALUES ('{self.cb_name}','{add_memo[0][1]}','{self.date}','{self.memo_data}')")
+            conn.commit()
+        self.textBrowser.append(self.memo_data)
+        a.close()
+
 
 
 if __name__ == "__main__":
