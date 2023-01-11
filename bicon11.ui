@@ -493,7 +493,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;지각&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_24">
+    <widget class="QLabel" name="myouting_label">
      <property name="geometry">
       <rect>
        <x>363</x>
@@ -510,7 +510,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -747,7 +747,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;2023~&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_22">
+    <widget class="QLabel" name="mylate_label">
      <property name="geometry">
       <rect>
        <x>183</x>
@@ -764,7 +764,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -834,7 +834,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;나의 출결 및 진도 현황&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_15">
+    <widget class="QLabel" name="myatt_label">
      <property name="geometry">
       <rect>
        <x>93</x>
@@ -851,7 +851,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -870,7 +870,7 @@
       <enum>Qt::Vertical</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="label_30">
+    <widget class="QLabel" name="myabsent_label">
      <property name="geometry">
       <rect>
        <x>453</x>
@@ -887,7 +887,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -909,7 +909,7 @@
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;출석&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_23">
+    <widget class="QLabel" name="myleave_label">
      <property name="geometry">
       <rect>
        <x>273</x>
@@ -926,7 +926,7 @@
 }</string>
      </property>
      <property name="text">
-      <string>0</string>
+      <string>01</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

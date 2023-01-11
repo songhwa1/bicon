@@ -16,6 +16,7 @@ class Search(QWidget, form_widget):
         self.setupUi(self)
         self.log = 0  # 로그인 ,로그 아웃 할 때 필요, 로그인 상태 저장
         self.inout = 0  # 입실, 퇴실 할 때 필요, 입실 상태 저장
+        self.outback = 0  # 외출, 복귀 할 때 필요, 외출 상태 저장
 
         self.login_SW.setCurrentIndex(0)
         self.att_outback_Button.hide()
@@ -52,12 +53,12 @@ class Search(QWidget, form_widget):
 
     def goattendance(self):
         self.login_SW.setCurrentIndex(2)
+        self.statusboard()  # 메서드 호출
 
     def goschedule(self):
         self.login_SW.setCurrentIndex(3)
         self.textEdit.clear()
         self.textBrowser.clear()
-        #self.att_outback_Button.hide()
 
     def studentlogin(self):
         self.student_id = self.login_id_lineEdit.text()
@@ -212,24 +213,71 @@ class Search(QWidget, form_widget):
         a.close()
 
     def showentrance(self):
+        # 퇴실
         if self.inout == 1:     # init에서 불러온 변수, 입실한 상태
             self.showexpulsion()    # 메서드 호출, 퇴실
+            self.att_outback_Button.hide()
+        # 입실
         else:
-            entrance_time = QTime.currentTime().toString('hh.mm.ss')
+            self.entrance_time = QTime.currentTime().toString('hh.mm.ss')
             self.att_inout_Button.setText('퇴실')
-            self.entrance_label.setText(entrance_time)
+            self.entrance_label.setText(self.entrance_time)
             self.inout = 1
             self.att_outback_Button.show()
 
     def showexpulsion(self):    # def showentrance에 호출 됨
-        expulsion_time = QTime.currentTime().toString('hh.mm.ss')
+        self.expulsion_time = QTime.currentTime().toString('hh.mm.ss')
         self.att_inout_Button.setText('입실')
-        self.expulsion_label.setText(expulsion_time)
+        self.expulsion_label.setText(self.expulsion_time)
 
     def showouting(self):
-        outing_time = QTime.currentTime().toString('hh.mm.ss')
-        self.att_outback_Button.setText('복귀')
-        self.outing_label.setText(outing_time)
+        if self.outback == 1:
+            self.showcomeback()
+        else:
+            self.outing_time = QTime.currentTime().toString('hh.mm.ss')
+            self.att_outback_Button.setText('복귀')
+            self.outing_label.setText(self.outing_time)
+            self.outback = 1
+
+    def showcomeback(self):
+        self.comeback_time = QTime.currentTime().toString('hh.mm.ss')
+        self.att_outback_Button.setText('외출')
+        self.comeback_label.setText(self.comeback_time)
+
+    def statusboard(self):
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM data_ai where ID like '{self.student_id}'"
+        a.execute(sql)
+        appear = a.fetchall()  # 이중 튜플 형태(( ))
+        self.myatt_label.setText(str(appear[0][17]))     # 출석
+        self.mylate_label.setText(str(appear[0][18]))    # 지각
+        self.myleave_label.setText(str(appear[0][19]))   # 조퇴
+        self.myouting_label.setText(str(appear[0][20]))  # 외출
+        self.myabsent_label.setText(str(appear[0][21]))  # 결석
+
+    def count(self):    # def showexplusion
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM `attendance check`.schedule where name like '{self.cb_name}'"
+        a.execute(sql)
+        user_info = a.fetchall()  # 이중 튜플 형태(( ))
+
+        if self.entrance_time > '09.20.59':
+
+
+
+
 
 
 if __name__ == "__main__":
