@@ -4,6 +4,7 @@ import pyqtgraph
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5 import Qt
 import csv
@@ -14,19 +15,26 @@ class Search(QWidget, form_widget):
         super().__init__()
         self.setupUi(self)
         self.log = 0  # 로그인 ,로그 아웃 할 때 필요, 로그인 상태 저장
+        self.inout = 0  # 입실, 퇴실 할 때 필요, 입실 상태 저장
 
         self.login_SW.setCurrentIndex(0)
+        self.att_outback_Button.hide()
+
+        # 페이지 이동
+        self.home_schedule_pb.clicked.connect(self.goschedule)
+        self.home_login_pb.clicked.connect(self.gologin)
+        self.home_attendance_pb.clicked.connect(self.goattendance)
         self.login_Home_Button.clicked.connect(self.gohome)
         self.att_Home_Button.clicked.connect(self.gohome)
         self.calendar_Home_Button1.clicked.connect(self.gohome)
         self.calendar_Home_Button2.clicked.connect(self.gohome)
-        self.home_schedule_pb.clicked.connect(self.goschedule)
-        self.home_login_pb.clicked.connect(self.gologin)
 
         self.login_student_pb.clicked.connect(self.studentlogin)
         self.login_teacher_pb.clicked.connect(self.teacherlogin)
         self.calendarWidget.clicked.connect(self.choicedate)
         self.addschedule_pb.clicked.connect(self.addschedule)
+        self.att_inout_Button.clicked.connect(self.showentrance)
+        self.att_outback_Button.clicked.connect(self.showouting)
 
 
     # 시그널 연결
@@ -34,19 +42,22 @@ class Search(QWidget, form_widget):
         self.login_SW.setCurrentIndex(0)
     def gologin(self):
         # 로그아웃
-        if self.log == 1:  # 로그인 된 상태
+        if self.log == 1:  # init에서 불러온 변수, 로그인 된 상태
             self.logout()
             self.login_SW.setCurrentIndex(0)
-
         else:
             self.login_SW.setCurrentIndex(1)    # 로그인 페이지로 가기
             self.login_id_lineEdit.clear()
             self.login_pw_lineEdit.clear()
 
+    def goattendance(self):
+        self.login_SW.setCurrentIndex(2)
+
     def goschedule(self):
         self.login_SW.setCurrentIndex(3)
         self.textEdit.clear()
         self.textBrowser.clear()
+        #self.att_outback_Button.hide()
 
     def studentlogin(self):
         self.student_id = self.login_id_lineEdit.text()
@@ -160,6 +171,7 @@ class Search(QWidget, form_widget):
         a.close()
 
     def choicedate(self):
+        self.textBrowser.clear()    # 페이지 나갔다 들어올 때 빈 칸으로 보이기 위함
         # addschedule에서 필요한 값이기 때문에 self 붙여줌
         self.date = self.calendarWidget.selectedDate().toString("yyyy-MM-dd")   # 선택한 날짜 정보 문자열로 반환
         self.cb_name = self.comboBox.currentText()
@@ -179,7 +191,7 @@ class Search(QWidget, form_widget):
 
 
     def addschedule(self):
-        self.choicedate()
+        self.choicedate()   # 메서드 호출
 
         # 일정 페이지로 넘어올 때 clear 헤주려고 self 붙여줌
         self.memo_data = self.textEdit.toPlainText()
@@ -193,13 +205,31 @@ class Search(QWidget, form_widget):
         sql = f"SELECT * FROM `attendance check`.schedule where name like '{self.cb_name}'"
         a.execute(sql)
         add_memo = a.fetchall()  # 이중 튜플 형태(( ))
-        print("@",add_memo)
         if str(self.cb_name) == add_memo[0][0]:
             a.execute(f"INSERT INTO schedule (name, ID, date1, memo) VALUES ('{self.cb_name}','{add_memo[0][1]}','{self.date}','{self.memo_data}')")
             conn.commit()
         self.textBrowser.append(self.memo_data)
         a.close()
 
+    def showentrance(self):
+        if self.inout == 1:     # init에서 불러온 변수, 입실한 상태
+            self.showexpulsion()    # 메서드 호출, 퇴실
+        else:
+            entrance_time = QTime.currentTime().toString('hh.mm.ss')
+            self.att_inout_Button.setText('퇴실')
+            self.entrance_label.setText(entrance_time)
+            self.inout = 1
+            self.att_outback_Button.show()
+
+    def showexpulsion(self):    # def showentrance에 호출 됨
+        expulsion_time = QTime.currentTime().toString('hh.mm.ss')
+        self.att_inout_Button.setText('입실')
+        self.expulsion_label.setText(expulsion_time)
+
+    def showouting(self):
+        outing_time = QTime.currentTime().toString('hh.mm.ss')
+        self.att_outback_Button.setText('복귀')
+        self.outing_label.setText(outing_time)
 
 
 if __name__ == "__main__":
