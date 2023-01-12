@@ -1,3 +1,5 @@
+import datetime
+
 import pymysql
 import sys
 import pyqtgraph
@@ -5,6 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
+from datetime import *
 from PyQt5.QtGui import *
 from PyQt5 import Qt
 import csv
@@ -16,6 +19,7 @@ class Search(QWidget, form_widget):
         self.setupUi(self)
         self.log = 0  # 로그인 ,로그 아웃 할 때 필요, 로그인 상태 저장
         self.inout = 0  # 입실, 퇴실 할 때 필요, 입실 상태 저장
+        self.out = 0    # 퇴실 이후 또 퇴실버튼 누를 시, 퇴실 누르지 않았을 시 필요. 퇴실 버튼 상태 저장
         self.outback = 0  # 외출, 복귀 할 때 필요, 외출 상태 저장
 
         self.login_SW.setCurrentIndex(0)
@@ -53,7 +57,7 @@ class Search(QWidget, form_widget):
 
     def goattendance(self):
         self.login_SW.setCurrentIndex(2)
-        self.statusboard()  # 메서드 호출
+        self.statusboard()  # 메서드 호출(나의 출결현황)
 
     def goschedule(self):
         self.login_SW.setCurrentIndex(3)
@@ -71,7 +75,7 @@ class Search(QWidget, form_widget):
                                password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql ="SELECT * FROM `attendance check`.data_ai where ID like '%s'"%self.student_id
+        sql ="SELECT * FROM `attendance check`.data_ai2nd where ID like '%s'"%self.student_id
         a.execute(sql)
         id_check = a.fetchall()     # 이중 튜플 형태(( ))
 
@@ -90,7 +94,7 @@ class Search(QWidget, form_widget):
 
             else:
                 # 로그인 성공
-                a.execute(f"UPDATE `attendance check`.data_ai SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
+                a.execute(f"UPDATE `attendance check`.data_ai2nd SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
                 conn.commit()
                 self.gohome()   # 홈으로 가는 메서드 호출
                 self.home_login_pb.setText('로그아웃')
@@ -110,7 +114,7 @@ class Search(QWidget, form_widget):
                                password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql = "SELECT * FROM `attendance check`.data_ai where ID like '%s'" % self.teacher_id
+        sql = "SELECT * FROM `attendance check`.data_ai2nd where ID like '%s'" % self.teacher_id
         a.execute(sql)
         id_check = a.fetchall()  # 이중 튜플 형태(( ))
         if id_check[0][4] == '교수':
@@ -128,9 +132,8 @@ class Search(QWidget, form_widget):
 
             else:
                 # 로그인 성공
-                a.execute(f"UPDATE `attendance check`.data_ai SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
+                a.execute(f"UPDATE `attendance check`.data_ai2nd SET 로그인여부 = 'O' WHERE ID = '{id_check[0][1]}'")
                 conn.commit()
-                print(id_check[0][26])
                 self.gohome()  # 홈으로 가는 메서드 호출
                 self.home_login_pb.setText('로그아웃')
                 self.log = 1  # init에서 불러온 변수(로그인 상태 저장)
@@ -152,19 +155,19 @@ class Search(QWidget, form_widget):
                                password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql = "SELECT * FROM `attendance check`.data_ai where 로그인여부 like '%s'" %'O'
+        sql = "SELECT * FROM `attendance check`.data_ai2nd where 로그인여부 like '%s'" %'O'
         a.execute(sql)
         login_check = a.fetchall()  # 이중 튜플 형태(( ))
 
         for i in range(len(login_check)):
             if self.student_id == login_check[i][1]:
                 temp = 1
-                f"update data_ai set 로그인여부 = 'X' where ID = '{self.student_id}'"
+                f"update data_ai2nd set 로그인여부 = 'X' where ID = '{self.student_id}'"
                 conn.commit()
 
             elif self.teacher_id == login_check[i][1]:
                 temp = 2
-                f"update data_ai set 로그인여부 = 'X' where ID = '{self.teacher_id}'"
+                f"update data_ai2nd set 로그인여부 = 'X' where ID = '{self.teacher_id}'"
                 conn.commit()
 
         QMessageBox.information(self, "로그아웃", "로그아웃 됐습니다")
@@ -178,10 +181,7 @@ class Search(QWidget, form_widget):
         self.cb_name = self.comboBox.currentText()
 
         # MySQL에서 import 해오기
-        conn = pymysql.connect(host='127.0.0.1',
-                               port=3306,
-                               user='root',
-                               password='0000',
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
                                db='attendance check')
         a = conn.cursor()
         a.execute(f"SELECT memo FROM `attendance check`.schedule where name like '{self.cb_name}' and date1 like '{self.date}'")
@@ -197,10 +197,7 @@ class Search(QWidget, form_widget):
         # 일정 페이지로 넘어올 때 clear 헤주려고 self 붙여줌
         self.memo_data = self.textEdit.toPlainText()
         # MySQL에서 import 해오기
-        conn = pymysql.connect(host='127.0.0.1',
-                               port=3306,
-                               user='root',
-                               password='0000',
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
                                db='attendance check')
         a = conn.cursor()
         sql = f"SELECT * FROM `attendance check`.schedule where name like '{self.cb_name}'"
@@ -214,54 +211,88 @@ class Search(QWidget, form_widget):
 
     def showentrance(self):
         # 퇴실
-        if self.inout == 1:     # init에서 불러온 변수, 입실한 상태
-            self.showexpulsion()    # 메서드 호출, 퇴실
-            self.att_outback_Button.hide()
+        if self.out == 1:   # 이미 퇴실버튼 눌렀을 때
+            QMessageBox.critical(self, "오류", "이미 퇴실 처리 되었습니다")
+        elif self.inout == 1:     # init에서 불러온 변수, 입실한 상태
+            if self.outing_label.text() == '' or self.comeback_label.text() == '':  # 외출, 복귀 안했을 경우
+                self.showexpulsion()    # 메서드 호출, 퇴실
+                self.att_outback_Button.hide()
+                self.countattendance()  # 메서드 호출(출석계산)
+                self.countleave()  # 메서드 호출(조퇴계산)
+            else:
+                self.showexpulsion()  # 메서드 호출, 퇴실
+                self.att_outback_Button.hide()
+                self.countattendance()  # 메서드 호출(출석계산)
+
         # 입실
         else:
-            self.entrance_time = QTime.currentTime().toString('hh.mm.ss')
+            entrance_datetime = datetime.now()
+            self.entrance_time = entrance_datetime.strftime('%H.%M.%S')
             self.att_inout_Button.setText('퇴실')
             self.entrance_label.setText(self.entrance_time)
+            self.countlate()  # 메서드 호출(지각계산)
             self.inout = 1
             self.att_outback_Button.show()
 
+
     def showexpulsion(self):    # def showentrance에 호출 됨
-        self.expulsion_time = QTime.currentTime().toString('hh.mm.ss')
+        expulsion_datetime = datetime.now()
+        self.expulsion_time = expulsion_datetime.strftime('%H.%M.%S')
         self.att_inout_Button.setText('입실')
         self.expulsion_label.setText(self.expulsion_time)
+        self.out = 1
+
 
     def showouting(self):
         if self.outback == 1:
             self.showcomeback()
         else:
-            self.outing_time = QTime.currentTime().toString('hh.mm.ss')
+            self.outing_datetime = datetime.now()
+            self.outing_time = self.outing_datetime.strftime('%H.%M.%S')
             self.att_outback_Button.setText('복귀')
             self.outing_label.setText(self.outing_time)
             self.outback = 1
 
     def showcomeback(self):
-        self.comeback_time = QTime.currentTime().toString('hh.mm.ss')
+        self.comeback_datetime = datetime.now()
+        self.comeback_time = self.comeback_datetime.strftime('%H.%M.%S')
         self.att_outback_Button.setText('외출')
         self.comeback_label.setText(self.comeback_time)
+        self.countouting()  # 메서드 호출(외출계산)
 
     def statusboard(self):
         # MySQL에서 import 해오기
-        conn = pymysql.connect(host='127.0.0.1',
-                               port=3306,
-                               user='root',
-                               password='0000',
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql = f"SELECT * FROM data_ai where ID like '{self.student_id}'"
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
         a.execute(sql)
         appear = a.fetchall()  # 이중 튜플 형태(( ))
-        self.myatt_label.setText(str(appear[0][17]))     # 출석
-        self.mylate_label.setText(str(appear[0][18]))    # 지각
-        self.myleave_label.setText(str(appear[0][19]))   # 조퇴
-        self.myouting_label.setText(str(appear[0][20]))  # 외출
-        self.myabsent_label.setText(str(appear[0][21]))  # 결석
+        self.myatt_label.setText(str(appear[0][11]))     # 출석
+        self.mylate_label.setText(str(appear[0][12]))    # 지각
+        self.myleave_label.setText(str(appear[0][13]))   # 조퇴
+        self.myouting_label.setText(str(appear[0][14]))  # 외출
+        self.myabsent_label.setText(str(appear[0][15]))  # 결석
 
-    def count(self):    # def showexplusion
+    def countattendance(self):    # def showexplusion에 추가할 메서드
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
+        a.execute(sql)
+        user_info = a.fetchall()  # 이중 튜플 형태(( ))
+        print(user_info)
+        if self.entrance_time < '09.21.00' and self.expulsion_time >= '17.01.00' and user_info[0][7] != '' and user_info[0][10] != '':
+            calatt= int(user_info[0][11]) + 1
+            print(calatt)
+            a.execute(f"UPDATE data_ai2nd SET 출석횟수 = {calatt} WHERE ID = '{self.student_id}'")
+            conn.commit()
+            print("****")
+        # else:
+        #     print("조건 불만족")
+
+    def countlate(self):
         # MySQL에서 import 해오기
         conn = pymysql.connect(host='127.0.0.1',
                                port=3306,
@@ -269,11 +300,61 @@ class Search(QWidget, form_widget):
                                password='0000',
                                db='attendance check')
         a = conn.cursor()
-        sql = f"SELECT * FROM `attendance check`.schedule where name like '{self.cb_name}'"
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
         a.execute(sql)
         user_info = a.fetchall()  # 이중 튜플 형태(( ))
-
         if self.entrance_time > '09.20.59':
+            callate = int(user_info[0][12]) + 1
+            a.execute(f"UPDATE data_ai2nd SET 지각횟수 = {callate} WHERE ID = '{self.student_id}'")
+            conn.commit()
+
+    def countleave(self):
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
+        a.execute(sql)
+        user_info = a.fetchall()  # 이중 튜플 형태(( ))
+        two_hour_later = self.outing_datetime + timedelta(hours=2)  #외출 후 2시간 경과
+        if (self.expulsion_time >'13.00.00' and self.expulsion_time < '17.01.00') or self.comeback_datetime > two_hour_later or user_info[0][8] == '0':
+            calleave = int(user_info[0][13]) + 1
+            a.execute(f"UPDATE data_ai2nd SET 조퇴횟수 = {calleave} WHERE ID = '{self.student_id}'")
+            conn.commit()
+
+    def countouting(self):
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1',
+                               port=3306,
+                               user='root',
+                               password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
+        a.execute(sql)
+        user_info = a.fetchall()  # 이중 튜플 형태(( ))
+        two_hour_later = self.outing_datetime + timedelta(hours=2)
+        if self.att_inout_Button.text() == '퇴실' and self.comeback_datetime <= two_hour_later:
+            calouting = int(user_info[0][14]) + 1
+            a.execute(f"UPDATE data_ai2nd SET 외출횟수 = {calouting} WHERE ID = '{self.student_id}'")
+            conn.commit()
+
+    def countabsent(self):
+        # MySQL에서 import 해오기
+        conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', password='0000',
+                               db='attendance check')
+        a = conn.cursor()
+        sql = f"SELECT * FROM data_ai2nd where ID like '{self.student_id}'"
+        a.execute(sql)
+        user_info = a.fetchall()  # 이중 튜플 형태(( ))
+        if (user_info[0][7] == '' or self.entrance_time > '13.00.00') or (user_info[0][10] == '0' or self.expulsion_time < '13.00.00'):
+            calabsent = int(user_info[0][15]) + 1
+            a.execute(f"UPDATE data_ai2nd SET 결석 = {calabsent} WHERE ID = '{self.student_id}'")
+            conn.commit()
+
+
+
+
 
 
 
@@ -290,7 +371,7 @@ if __name__ == "__main__":
 
     widget.addWidget(mainWindow)
 
-    widget.setFixedHeight(800)
-    widget.setFixedWidth(600)
+    widget.setFixedHeight(921)
+    widget.setFixedWidth(601)
     widget.show()
     app.exec_()
