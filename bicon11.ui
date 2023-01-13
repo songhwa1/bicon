@@ -26,7 +26,7 @@
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>5</number>
    </property>
    <widget class="QWidget" name="page_2">
     <widget class="QLabel" name="label">
@@ -209,7 +209,7 @@
       </rect>
      </property>
      <property name="text">
-      <string/>
+      <string>abcd</string>
      </property>
     </widget>
     <widget class="QLineEdit" name="login_pw_lineEdit">
@@ -222,7 +222,7 @@
       </rect>
      </property>
      <property name="text">
-      <string/>
+      <string>1234</string>
      </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
@@ -464,7 +464,7 @@
     <widget class="QLabel" name="outing_label">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>240</x>
        <y>440</y>
        <width>71</width>
        <height>20</height>
@@ -583,7 +583,7 @@
     <widget class="QLabel" name="expulsion_label">
      <property name="geometry">
       <rect>
-       <x>410</x>
+       <x>420</x>
        <y>440</y>
        <width>71</width>
        <height>20</height>
@@ -599,7 +599,7 @@
     <widget class="QLabel" name="entrance_label">
      <property name="geometry">
       <rect>
-       <x>230</x>
+       <x>240</x>
        <y>400</y>
        <width>71</width>
        <height>20</height>
@@ -641,7 +641,7 @@
     <widget class="QLabel" name="comeback_label">
      <property name="geometry">
       <rect>
-       <x>410</x>
+       <x>420</x>
        <y>400</y>
        <width>71</width>
        <height>20</height>
@@ -1125,6 +1125,11 @@ color: rgb(11, 11, 11);</string>
      </item>
      <item>
       <property name="text">
+       <string>류가미</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>박규환</string>
       </property>
      </item>
@@ -1216,11 +1221,6 @@ color: rgb(11, 11, 11);</string>
      <item>
       <property name="text">
        <string>최지혁</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>류가미</string>
       </property>
      </item>
     </widget>
@@ -1440,6 +1440,220 @@ color: rgb(11, 11, 11);</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page_6">
+    <widget class="QComboBox" name="comboBox2">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>100</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>강민영</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>고연재</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>김기태</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>김명은</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>김성일</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>김연수</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>노도현</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>류가미</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>박규환</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>박성빈</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>박시형</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>박의용</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>오송화</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이범규</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이보라</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이소윤</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이여름</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이지혜</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>이현도</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>임성경</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>임영효</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>임홍선</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>장은희</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>정연우</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>정철우</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>주민석</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>최지혁</string>
+      </property>
+     </item>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>160</y>
+       <width>541</width>
+       <height>231</height>
+      </rect>
+     </property>
+     <column>
+      <property name="text">
+       <string>이름</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>내용</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QLabel" name="label_22">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>351</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">font: 14pt &quot;GyeonggiBatang&quot;;</string>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:20pt;&quot;&gt;메세지&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="message_lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>410</y>
+       <width>541</width>
+       <height>51</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="send_pb">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>480</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+	font: 15pt &quot;GyeonggiBatang&quot;;
+	color: white;
+	background-color: rgb(0, 85, 255);
+	border-radius: 5px;
+}</string>
+     </property>
+     <property name="text">
+      <string>메세지 보내기</string>
      </property>
     </widget>
    </widget>
