@@ -36,7 +36,7 @@ CREATE TABLE `schedule` (
 
 LOCK TABLES `schedule` WRITE;
 /*!40000 ALTER TABLE `schedule` DISABLE KEYS */;
-INSERT INTO `schedule` VALUES ('오송화','asdf','2023-01-10','fdsfsdsfs'),('이상복','boki',NULL,NULL),('오송화','asdf','2023-01-10','dsfsdfdfs'),('오송화','asdf','2023-01-10','tdgfdgsgsd'),('오송화','asdf','2023-01-10','어려워'),('오송화','asdf','2023-01-10','fcxvzvxcv'),('오송화','asdf','2023-01-10','gdgfsd'),('오송화','asdf','2023-01-11','gfhhd'),('오송화','asdf','2023-01-11','gfhhdfd\nfdgfgsdfg\n'),('김성일','ksi',NULL,NULL),('김성일','ksi','2023-01-11','되나?'),('김성일','ksi','2023-01-11','되나?\n추가도 됨?');
+INSERT INTO `schedule` VALUES ('오송화','asdf','2023-01-10','fdsfsdsfs'),('이상복','boki',NULL,NULL),('오송화','asdf','2023-01-10','dsfsdfdfs'),('오송화','asdf','2023-01-10','tdgfdgsgsd'),('오송화','asdf','2023-01-10','어려워'),('오송화','asdf','2023-01-10','fcxvzvxcv'),('오송화','asdf','2023-01-10','gdgfsd'),('오송화','asdf','2023-01-11','gfhhd'),('오송화','asdf','2023-01-11','gfhhdfd\nfdgfgsdfg\n'),('김성일','ksi',NULL,NULL),('김성일','ksi','2023-01-11','되나?'),('김성일','ksi','2023-01-11','되나?\n추가도 됨?'),('김성일','ksi','2022-12-21','가나다라'),('김성일','ksi','2022-12-21','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-19','가나다라'),('김성일','ksi','2023-01-17','가나다라'),('김성일','ksi','2023-01-09','가나다라'),('김성일','ksi','2023-01-09','가나다라'),('김성일','ksi','2023-01-09','가나다라');
 /*!40000 ALTER TABLE `schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -49,4 +49,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-01-11 21:12:58
+-- Dump completed on 2023-01-13 20:55:18
